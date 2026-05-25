@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://b3t5kbi7vuutx"]
+
+[ext_resource type="Script" uid="uid://1kmyu2238ggw" path="res://exp_gem.gd" id="1_b1j5s"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v2dn2"]
+albedo_color = Color(0.1945343, 0.81640625, 0.49575353, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_lo2b4"]
+material = SubResource("StandardMaterial3D_v2dn2")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2snm1"]
+
+[node name="ExpGem" type="Area3D" unique_id=2055703566]
+script = ExtResource("1_b1j5s")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1020993841]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.38352892, 0)
+mesh = SubResource("SphereMesh_lo2b4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=240133949]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.3844857, 0)
+shape = SubResource("SphereShape3D_2snm1")
