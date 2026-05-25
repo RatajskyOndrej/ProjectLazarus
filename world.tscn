@@ -3,15 +3,21 @@
 [ext_resource type="Script" uid="uid://503e4vh7tph7" path="res://main.gd" id="1_aqk2v"]
 [ext_resource type="PackedScene" uid="uid://bou6xerksia6t" path="res://player.tscn" id="1_f3sb7"]
 [ext_resource type="Script" uid="uid://2xesc6hcj8n2" path="res://camera_3d.gd" id="2_fj7yv"]
-[ext_resource type="PackedScene" uid="uid://vusp5dvhugre" path="res://enemy.tscn" id="3_tlwt5"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_gv5m4"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_f3sb7"]
 size = Vector3(19.925722, 0.001, 19.945078)
 
+[sub_resource type="Environment" id="Environment_tlwt5"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_energy = 0.0
+
 [node name="Main" type="Node3D" unique_id=1001178355]
 script = ExtResource("1_aqk2v")
+metadata/_edit_horizontal_guides_ = [300.0]
+metadata/_edit_vertical_guides_ = [578.0]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=325673020]
 
@@ -25,17 +31,21 @@ shape = SubResource("BoxShape3D_f3sb7")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=831282549]
 transform = Transform3D(1, 0, 0, 0, -0.2990406, 0.9542404, 0, -0.9542404, -0.2990406, -5.5584474, 5.7923894, 0.27569258)
+light_energy = 0.0
 
 [node name="player" parent="." unique_id=146039675 groups=["enemy"] instance=ExtResource("1_f3sb7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1624584, 1.275919, -4.1017404)
 
+[node name="Flashlight" type="SpotLight3D" parent="player" unique_id=98679792]
+transform = Transform3D(0.9999628, -0.008623531, 0.00022841411, 0.008626511, 0.999692, -0.02326806, -2.7690912e-05, 0.023269165, 0.9997293, 0.19781971, 0.49256277, 2.0514092)
+light_energy = 10.0
+spot_range = 15.0
+spot_angle = 35.0
+
 [node name="Camera3D" type="Camera3D" parent="." unique_id=800813562]
-transform = Transform3D(1, 0, 0, 0, 0.6347305, 0.77273357, 0, -0.77273357, 0.6347305, -4.253398, 5.598226, -1.4241621)
+transform = Transform3D(1, 0, 0, 0, 0.47752687, 0.87861717, 0, -0.87861717, 0.47752687, -4.253398, 5.598226, -1.4241621)
 fov = 83.03597
 script = ExtResource("2_fj7yv")
-
-[node name="Enemy" parent="." unique_id=1901789264 instance=ExtResource("3_tlwt5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.31729996, 2.1198688, 8.327751)
 
 [node name="Spawners" type="Node3D" parent="." unique_id=918169784]
 
@@ -69,5 +79,67 @@ offset_right = 40.0
 offset_bottom = 23.0
 theme_override_font_sizes/font_size = 32
 text = "HP: 3"
+
+[node name="LevelLabel" type="Label" parent="UI" unique_id=276509402]
+unique_name_in_owner = true
+offset_top = 40.0
+offset_right = 40.0
+offset_bottom = 63.0
+theme_override_font_sizes/font_size = 32
+text = "Level 1 (0-5)"
+
+[node name="UpgradePanel" type="Panel" parent="UI" unique_id=1692805172]
+unique_name_in_owner = true
+process_mode = 3
+visible = false
+offset_left = 244.0
+offset_top = 130.0
+offset_right = 927.0
+offset_bottom = 531.0
+
+[node name="SpeedButton" type="Button" parent="UI/UpgradePanel" unique_id=502636897]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 64.0
+offset_top = 149.0
+offset_right = 214.0
+offset_bottom = 209.0
+text = "MoveSpeed +1"
+
+[node name="FireRateButton" type="Button" parent="UI/UpgradePanel" unique_id=479517427]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 265.0
+offset_top = 147.0
+offset_right = 415.0
+offset_bottom = 207.0
+text = "Fire rate plus"
+
+[node name="HealButton" type="Button" parent="UI/UpgradePanel" unique_id=2036453300]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 506.0
+offset_top = 141.0
+offset_right = 656.0
+offset_bottom = 201.0
+text = "Heal 1HP
+"
+
+[node name="TimerLabel" type="Label" parent="UI" unique_id=797286513]
+unique_name_in_owner = true
+offset_left = 546.0
+offset_top = 5.0
+offset_right = 603.0
+offset_bottom = 44.0
+
+[node name="KillsLabel" type="Label" parent="UI" unique_id=1236420588]
+unique_name_in_owner = true
+offset_left = 1084.0
+offset_top = 8.0
+offset_right = 1140.0
+offset_bottom = 43.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1035033149]
+environment = SubResource("Environment_tlwt5")
 
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]

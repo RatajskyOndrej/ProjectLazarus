@@ -30,4 +30,4 @@ mesh = SubResource("BoxMesh_onrkg")
 surface_material_override/0 = SubResource("StandardMaterial3D_i3pqv")
 
 [node name="Muzzle" type="Marker3D" parent="." unique_id=368903067]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35232583, 0.050153226, -0.5298464)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35232583, -0.59937906, -0.5298464)

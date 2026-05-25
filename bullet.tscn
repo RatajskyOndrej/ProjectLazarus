@@ -10,9 +10,9 @@
 script = ExtResource("1_v7oki")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1745005306]
-transform = Transform3D(0.031343523, -0.08495376, -0.119584434, -0.14162666, -0.04937305, -0.002045855, -0.038202964, 0.11333649, -0.09052831, 0.009890745, 0.38787562, -0.43331805)
+transform = Transform3D(0.031343523, -0.08495376, -0.119584434, -0.14162666, -0.04937305, -0.002045855, -0.038202964, 0.11333649, -0.09052831, 0, 0, 0)
 mesh = SubResource("SphereMesh_rtl8c")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=603593776]
-transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0.013933837, 0.39239684, -0.4358435)
+transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0, 0)
 shape = SubResource("SphereShape3D_v7oki")

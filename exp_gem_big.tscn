@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dnphfyg1fvlh1"]
+
+[ext_resource type="PackedScene" uid="uid://b3t5kbi7vuutx" path="res://exp_gem.tscn" id="1_4kwv7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jm87q"]
+albedo_color = Color(0.55859375, 0.16801453, 0.51587415, 1)
+
+[node name="ExpGem" unique_id=2055703566 instance=ExtResource("1_4kwv7")]
+exp_amount = 5
+
+[node name="MeshInstance3D" parent="." index="0" unique_id=1020993841]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.38352892, 0)
+material_overlay = SubResource("StandardMaterial3D_jm87q")

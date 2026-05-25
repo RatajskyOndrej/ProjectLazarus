@@ -1,12 +1,12 @@
 extends Area3D
 
+@export var exp_amount: int = 1 
+
 func _ready() -> void:
-	# Krystal čeká, až se ho dotkne hráč
-	body_entered.connect(_on_body_entered)
+	if not body_entered.is_connected(_on_body_entered):
+		body_entered.connect(_on_body_entered)
 
 func _on_body_entered(body: Node3D) -> void:
-	if body.name == "player":
-		# Zeptáme se, jestli umí hráč sbírat expy
-		if body.has_method("gain_exp"):
-			body.gain_exp(1) # Přidáme hráči 1 bod zkušeností
-		queue_free() # Krystal zmizí (sebrali jsme ho)
+	if body.has_method("gain_exp"):
+		body.gain_exp(exp_amount)
+		queue_free() # Krystal zmizí

@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dmluphoyb8jsj"]
+
+[ext_resource type="PackedScene" uid="uid://vusp5dvhugre" path="res://enemy.tscn" id="1_dpkcn"]
+[ext_resource type="PackedScene" uid="uid://dnphfyg1fvlh1" path="res://exp_gem_big.tscn" id="2_tmyej"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ulso3"]
+albedo_color = Color(0.90234375, 0.14804077, 0.81984186, 1)
+
+[node name="Enemy" unique_id=1901789264 instance=ExtResource("1_dpkcn")]
+speed = 1.5
+hp = 5
+exp_gem_scene = ExtResource("2_tmyej")
+
+[node name="MeshInstance3D" parent="." index="0" unique_id=2084014066]
+transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
+material_overlay = SubResource("StandardMaterial3D_ulso3")
+
+[node name="CollisionShape3D" parent="." index="1" unique_id=1021334147]
+transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
