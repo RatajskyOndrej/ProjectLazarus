@@ -5,6 +5,9 @@ extends Node3D
 @onready var enemy_fast = preload("res://enemy_fast.tscn")
 @onready var enemy_tank = preload("res://enemy_tank.tscn")
 
+@onready var game_over_panel = $UI/GameOverPanel
+@onready var game_over_text = $"%GameOverText"
+
 @onready var spawners = $Spawners.get_children()
 @onready var spawn_timer = $SpawnTimer 
 
@@ -55,3 +58,22 @@ func update_ui():
 		timer_label.text = "Time: %02d:%02d" % [minutes, seconds]
 	if kills_label:
 		kills_label.text = "Kills: " + str(kills)
+
+
+# Tuto funkci zavolá hráč, když mu dojdou HP
+func game_over():
+	get_tree().paused = true # Zastaví čas, nepřátele, všechno
+	
+	if game_over_panel:
+		game_over_panel.show()
+		
+	if game_over_text:
+		var minutes = int(game_time) / 60
+		var seconds = int(game_time) % 60
+		var time_str = "%02d:%02d" % [minutes, seconds]
+		game_over_text.text = "GAME OVER\n\nSurvived: " + time_str + "\nEnemies killed: " + str(kills)
+
+# Toto se stane, když klikneš na Back to Menu
+func _on_menu_button_pressed() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://main_menu.tscn")

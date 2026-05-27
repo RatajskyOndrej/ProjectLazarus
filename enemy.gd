@@ -1,5 +1,6 @@
 extends CharacterBody3D
 
+@onready var los = $LOS
 @export var speed: float = 3.0
 @export var hp: int = 1 # Základní nepřítel má 1 HP, Tank bude mít v Inspectoru 5
 @export var exp_gem_scene: PackedScene = preload("res://exp_gem.tscn") # Výchozí scéna krystalu 

@@ -104,8 +104,9 @@ func take_damage(amount: int) -> void:
 	if hp <= 0: die()
 
 func die() -> void:
-	print("GAME OVER!")
-	get_tree().reload_current_scene()
+	# Místo queue_free() řekneme mapě, že je konec
+	if get_parent().has_method("game_over"):
+		get_parent().game_over()
 
 # --- 5. ZKUŠENOSTI A LEVELOVÁNÍ ---
 func gain_exp(amount: int) -> void:

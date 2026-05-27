@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://c4iviusqwwy81"]
 
-[ext_resource type="Script" uid="uid://503e4vh7tph7" path="res://main.gd" id="1_aqk2v"]
-[ext_resource type="PackedScene" uid="uid://bou6xerksia6t" path="res://player.tscn" id="1_f3sb7"]
-[ext_resource type="Script" uid="uid://2xesc6hcj8n2" path="res://camera_3d.gd" id="2_fj7yv"]
+[ext_resource type="Script" uid="uid://503e4vh7tph7" path="res://main.gd" id="1_h2yge"]
+[ext_resource type="PackedScene" uid="uid://bou6xerksia6t" path="res://player.tscn" id="2_1bvp3"]
+[ext_resource type="Script" uid="uid://2xesc6hcj8n2" path="res://camera_3d.gd" id="3_lquwl"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_gv5m4"]
 
@@ -15,14 +15,14 @@ ambient_light_source = 2
 ambient_light_energy = 0.0
 
 [node name="Main" type="Node3D" unique_id=1001178355]
-script = ExtResource("1_aqk2v")
+script = ExtResource("1_h2yge")
 metadata/_edit_horizontal_guides_ = [300.0]
 metadata/_edit_vertical_guides_ = [578.0]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=325673020]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D" unique_id=1739892420]
-transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 20, -0.40852737, -2.4795532e-05, 0.005278945)
+transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 20, -0.38325787, 0.028388023, 0.006862998)
 mesh = SubResource("BoxMesh_gv5m4")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1820559377]
@@ -33,19 +33,25 @@ shape = SubResource("BoxShape3D_f3sb7")
 transform = Transform3D(1, 0, 0, 0, -0.2990406, 0.9542404, 0, -0.9542404, -0.2990406, -5.5584474, 5.7923894, 0.27569258)
 light_energy = 0.0
 
-[node name="player" parent="." unique_id=146039675 groups=["enemy"] instance=ExtResource("1_f3sb7")]
+[node name="player" parent="." unique_id=146039675 groups=["enemy"] instance=ExtResource("2_1bvp3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1624584, 1.275919, -4.1017404)
 
 [node name="Flashlight" type="SpotLight3D" parent="player" unique_id=98679792]
-transform = Transform3D(0.9999628, -0.008623531, 0.00022841411, 0.008626511, 0.999692, -0.02326806, -2.7690912e-05, 0.023269165, 0.9997293, 0.19781971, 0.49256277, 2.0514092)
+transform = Transform3D(0.9442496, 0.32854906, 0.021172734, -0.29712537, 0.8227065, 0.48463434, 0.14180723, -0.46390676, 0.8744606, 0.004031658, 0.51300645, 0.035603046)
 light_energy = 10.0
+light_specular = 0.0
 spot_range = 15.0
-spot_angle = 35.0
+spot_angle = 38.72
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=800813562]
-transform = Transform3D(1, 0, 0, 0, 0.47752687, 0.87861717, 0, -0.87861717, 0.47752687, -4.253398, 5.598226, -1.4241621)
+[node name="PlayerGlow" type="OmniLight3D" parent="player" unique_id=1141881872]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.76616, 0)
+light_energy = 0.5
+light_specular = 0.0
+
+[node name="Camera3D" type="Camera3D" parent="player" unique_id=800813562]
+transform = Transform3D(1, 0, 0, 0, 0.47752687, 0.87861717, 0, -0.87861717, 0.47752687, -0.09093952, 4.322307, 2.6775782)
 fov = 83.03597
-script = ExtResource("2_fj7yv")
+script = ExtResource("3_lquwl")
 
 [node name="Spawners" type="Node3D" parent="." unique_id=918169784]
 
@@ -139,7 +145,41 @@ offset_top = 8.0
 offset_right = 1140.0
 offset_bottom = 43.0
 
+[node name="GameOverPanel" type="Panel" parent="UI" unique_id=844335985]
+process_mode = 3
+visible = false
+offset_left = 280.0
+offset_top = 72.0
+offset_right = 880.0
+offset_bottom = 572.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/GameOverPanel" unique_id=1004393612]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameOverText" type="Label" parent="UI/GameOverPanel/VBoxContainer" unique_id=844802752]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "you died "
+
+[node name="MenuButton" type="Button" parent="UI/GameOverPanel/VBoxContainer" unique_id=1282285626]
+layout_mode = 2
+text = "Back to Main Menu"
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1035033149]
 environment = SubResource("Environment_tlwt5")
 
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
+[connection signal="pressed" from="UI/GameOverPanel/VBoxContainer/MenuButton" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="UI/GameOverPanel/VBoxContainer/MenuButton" to="." method="_on_menu_button_pressed"]
