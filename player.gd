@@ -13,6 +13,7 @@ var exp_to_next_level = 5
 
 var can_shoot = true
 var fire_rate = 0.5 
+var has_pistol = false
 
 @onready var hp_label = $"%HPLabel"
 @onready var level_label = $"%LevelLabel"
@@ -85,8 +86,8 @@ func _physics_process(delta: float) -> void:
 				look_at(target_look, Vector3.UP)
 				
 	# --- 3. STŘÍLENÍ ---
-	if Input.is_action_pressed("shoot") and can_shoot:
-		can_shoot = false 
+	if Input.is_action_pressed("shoot") and can_shoot and has_pistol:
+		can_shoot = false
 		
 		var bullet = bullet_scene.instantiate()
 		get_parent().add_child(bullet)
@@ -103,10 +104,11 @@ func take_damage(amount: int) -> void:
 	if hp_label: hp_label.text = "HP: " + str(hp)
 	if hp <= 0: die()
 
-func die() -> void:
-	# Místo queue_free() řekneme mapě, že je konec
-	if get_parent().has_method("game_over"):
-		get_parent().game_over()
+func die():
+	print("You Died")
+	# Krátká pauza (0.5s), aby hráč viděl, že umřel
+	await get_tree().create_timer(0.5).timeout
+	get_tree().reload_current_scene() # Restartuje celou mapu (jako v Police Stories)
 
 # --- 5. ZKUŠENOSTI A LEVELOVÁNÍ ---
 func gain_exp(amount: int) -> void:

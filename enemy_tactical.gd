@@ -4,6 +4,8 @@ extends CharacterBody3D
 @onready var los = $LOS
 @export var speed: float = 3.0
 @export var hp: int = 1
+# Zapne režim nehybného terče na střelnici
+@export var is_static_target: bool = false
 
 # 🔥 Nastavení šířky kuželu tvé baterky (0.7 = cca 90 stupňů, 0.5 = cca 120 stupňů)
 @export var vision_cone_threshold: float = 0.6
@@ -14,31 +16,37 @@ var tracking_player: bool = false
 @onready var player = get_tree().current_scene.find_child("player", true, false)
 
 func _physics_process(delta: float) -> void:
-	# POLICE STORIES: V základu je nepřítel pro hráče neviditelný (schovaný v mlze)
 	$MeshInstance3D.visible = false
-
+	
+	if is_static_target:
+		$MeshInstance3D.visible = true
+		return 
+		
 	if player:
-		los.global_position = global_position
-		los.target_position = los.to_local(player.global_position)
+		# 
+		if global_position.distance_to(player.global_position) < 1.2:
+			if player.has_method("die"):
+				player.die()
+				return # Ukončí pohyb, už tě zabil
+				
+		# --- Zbytek je detekce zraku pomocí paprsku ---
+		los.global_position = global_position + Vector3(0, 1.0, 0)
+		los.target_position = los.to_local(player.global_position + Vector3(0, 1.0, 0))
 		los.force_raycast_update()
 		
 		var can_see_player = false
 		if los.is_colliding():
 			var collider = los.get_collider()
 			if collider == player:
-				# Fyzicky v cestě nestojí zeď. Teď ověříme, zda je nepřítel v zorném poli baterky:
-				var player_forward = -player.global_transform.basis.z.normalized() # Kam hráč kouká
-				var dir_to_enemy = (global_position - player.global_position).normalized() # Směr k nepříteli
+				var player_forward = -player.global_transform.basis.z.normalized() 
+				var dir_to_enemy = (global_position - player.global_position).normalized() 
 				
-				var dot_product = player_forward.dot(dir_to_enemy)
-				
-				# Pokud je nepřítel v kuželu světla před hráčem
-				if dot_product > vision_cone_threshold:
+				if player_forward.dot(dir_to_enemy) > vision_cone_threshold:
 					can_see_player = true
 		
-		# STAV A: Nepřítel je osvícen baterkou (Máme Line of Sight)
+		# STAV A: Osvícen baterkou
 		if can_see_player:
-			$MeshInstance3D.visible = true # Tady se kostka hrdě zviditelní!
+			$MeshInstance3D.visible = true 
 			last_known_position = player.global_position
 			tracking_player = true
 			
@@ -46,12 +54,12 @@ func _physics_process(delta: float) -> void:
 			nav_agent.target_position = player.global_position
 			
 			var next_path_position = nav_agent.get_next_path_position()
-			var direction = (next_path_position - global_position).normalized()
-			velocity = direction * speed
+			var direction = (next_path_position - global_position)
+			direction.y = 0 # 🔥 OPRAVA: I tady nesmí vrtat do podlahy!
+			velocity = direction.normalized() * speed
 			
-		# STAV B: Hráč otočil baterku jinam nebo zalalezl za zeď -> nepřítel stále běží na poslední známé místo
+		# STAV B: Hledá podle sluchu nebo staré pozice
 		elif tracking_player:
-			# Mesh zůstává neviditelný, protože na něj nesvítíme! Ale nepřítel stále aktivně útočí.
 			nav_agent.target_position = last_known_position
 			
 			if global_position.distance_to(last_known_position) < 1.0:
@@ -59,7 +67,9 @@ func _physics_process(delta: float) -> void:
 				velocity = Vector3.ZERO
 			else:
 				var next_path_position = nav_agent.get_next_path_position()
-				var direction = (next_path_position - global_position).normalized()
+				var direction = (next_path_position - global_position)
+				direction.y = 0 
+				direction = direction.normalized()
 				if direction.length() > 0.1:
 					look_at(Vector3(next_path_position.x, global_position.y, next_path_position.z), Vector3.UP)
 				velocity = direction * speed
