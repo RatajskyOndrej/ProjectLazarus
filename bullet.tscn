@@ -1,18 +1,66 @@
 [gd_scene format=3 uid="uid://cpkkltuq0mw1p"]
 
-[ext_resource type="Script" uid="uid://bh2avytj5x08q" path="res://bullet.gd" id="1_v7oki"]
+[sub_resource type="GDScript" id="GDScript_rtl8c"]
+script/source = "extends Area3D
+
+const SPEED = 40
+var damage: int = 1 
+
+# 🔥 PŘEPÍNAČ: Kdo stiskl spoušť?
+var shot_by_enemy: bool = false 
+
+func _ready() -> void:
+	body_entered.connect(_on_body_entered)
+	await get_tree().create_timer(2.0).timeout
+	queue_free()
+
+func _physics_process(delta: float) -> void:
+	# Letí vpřed směrem, kam je natočena
+	global_translate(-global_transform.basis.z * SPEED * delta)
+
+func _on_body_entered(body: Node3D) -> void:
+	# --- 🔴 CHOVÁNÍ: STŘÍLÍ NEPŘÍTEL ---
+	if shot_by_enemy:
+		if body.name == \"player\": # Zasáhlo to tebe!
+			if body.has_method(\"die\"):
+				body.die()
+			queue_free()
+		elif body.has_method(\"take_damage\"):
+			# Ignorujeme ostatní nepřátele (aby se nestříleli do zad)
+			pass
+		else:
+			# Narazila do zdi
+			queue_free()
+			
+	# --- 🔵 CHOVÁNÍ: STŘÍLÍ HRÁČ (Tvoje původní logika) ---
+	else:
+		if body.name == \"player\":
+			return 
+			
+		if body.has_method(\"take_damage\"):
+			body.take_damage(damage)
+			
+		queue_free()
+"
 
 [sub_resource type="SphereMesh" id="SphereMesh_rtl8c"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v7oki"]
+albedo_color = Color(0.6168616, 0.8203125, 0.21469116, 1)
+emission_enabled = true
+emission = Color(0.82669735, 0.859375, 0.26184082, 1)
+emission_energy_multiplier = 3.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_v7oki"]
 
 [node name="Bullet" type="Area3D" unique_id=1552702722]
-script = ExtResource("1_v7oki")
+script = SubResource("GDScript_rtl8c")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1745005306]
-transform = Transform3D(0.031343523, -0.08495376, -0.119584434, -0.14162666, -0.04937305, -0.002045855, -0.038202964, 0.11333649, -0.09052831, 0, 0, 0)
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.5, 0, 0, 0)
 mesh = SubResource("SphereMesh_rtl8c")
+surface_material_override/0 = SubResource("StandardMaterial3D_v7oki")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=603593776]
-transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0, 0)
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.5, 0, 0, 0)
 shape = SubResource("SphereShape3D_v7oki")

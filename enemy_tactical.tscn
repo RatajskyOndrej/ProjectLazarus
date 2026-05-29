@@ -22,3 +22,9 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 shape = SubResource("BoxShape3D_iifgy")
 
 [node name="NavAgent" type="NavigationAgent3D" parent="." unique_id=1369608715]
+
+[node name="Muzzle" type="Marker3D" parent="." unique_id=702013618]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13825619, 0.13129318, -0.92647135)
+
+[node name="LOS" type="RayCast3D" parent="." unique_id=2131372829]
+collision_mask = 3

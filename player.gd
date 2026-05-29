@@ -1,8 +1,8 @@
 extends CharacterBody3D
 
 # ZMĚNILI JSME CONST NA VAR, ABYCHOM TO MOHLI VYLEPŠOVAT!
-var speed = 5.0 
-var hp = 3
+var speed = 6.0
+var hp = 1
 
 var shake_intensity = 0.0
 var shake_decay = 3.0 # Jak rychle třesení odezní
@@ -25,7 +25,7 @@ var has_pistol = false
 @onready var speed_button = $"../UI/UpgradePanel/SpeedButton"
 @onready var fire_rate_button = $"../UI/UpgradePanel/FireRateButton"
 @onready var heal_button = $"../UI/UpgradePanel/HealButton"
-
+const FAIL_SCREEN = preload("res://fail_screen.tscn")
 
 func _ready() -> void:
 	if hp_label:
@@ -46,6 +46,10 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	# PRIDÁME TENTO ŘÁDEK SEM NA ZAČÁTEK:
 	var camera = get_viewport().get_camera_3d()
+	if has_pistol:
+		$Muzzle.visible = true # Nebo jiný model zbraně, který máš na hráči
+	else:
+		$Muzzle.visible = false
 
 	# --- 1. POHYB HRÁČE ---
 	var input_dir := Input.get_vector("move_left", "move_right", "move_foreward", "move_back")
@@ -104,11 +108,12 @@ func take_damage(amount: int) -> void:
 	if hp_label: hp_label.text = "HP: " + str(hp)
 	if hp <= 0: die()
 
-func die():
-	print("You Died")
-	# Krátká pauza (0.5s), aby hráč viděl, že umřel
-	await get_tree().create_timer(0.5).timeout
-	get_tree().reload_current_scene() # Restartuje celou mapu (jako v Police Stories)
+func die() -> void:
+	print("Hráč dostal zásah!")
+	
+	# Vytvoříme instanci restartovací obrazovky
+	var fail_instance = FAIL_SCREEN.instantiate()
+	get_tree().current_scene.add_child(fail_instance)
 
 # --- 5. ZKUŠENOSTI A LEVELOVÁNÍ ---
 func gain_exp(amount: int) -> void:
@@ -149,3 +154,7 @@ func upgrade_heal() -> void:
 	hp += 1 # Přidáme život
 	if hp_label: hp_label.text = "HP: " + str(hp)
 	resume_game()
+
+
+func _on_pistol_pickup_body_entered(body: Node3D) -> void:
+	pass # Replace with function body.
