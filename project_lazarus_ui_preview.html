@@ -1,0 +1,307 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  #game-preview {
+    background: #1a1a1a;
+    width: 100%;
+    min-height: 420px;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Press Start 2P', monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-radius: 8px;
+  }
+
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .game-world {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 0;
+  }
+
+  .world-text {
+    color: #444;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    text-align: center;
+    line-height: 2;
+  }
+
+  .dialogue-box {
+    position: relative;
+    z-index: 3;
+    background: rgba(0,0,0,0.92);
+    border-top: 2px solid #555;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+    min-height: 110px;
+    transition: all 0.3s;
+  }
+
+  .portrait {
+    width: 100px;
+    min-width: 100px;
+    background: #111;
+    border-right: 2px solid #555;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 6px;
+    gap: 6px;
+  }
+
+  .portrait-img {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+    border: 2px solid #444;
+  }
+
+  .portrait-name {
+    color: #aaa;
+    font-size: 6px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .dialogue-content {
+    flex: 1;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .speaker-name {
+    color: #f0a500;
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+
+  .speaker-name.thoughts {
+    color: #7ec8e3;
+  }
+
+  .dialogue-text {
+    color: #e8e8e8;
+    font-size: 7px;
+    line-height: 2;
+  }
+
+  .continue-arrow {
+    align-self: flex-end;
+    color: #f0a500;
+    font-size: 8px;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .glitch-bar {
+    position: absolute;
+    left: 0; right: 0;
+    height: 3px;
+    background: #0ff;
+    opacity: 0;
+    z-index: 10;
+    transition: opacity 0.1s;
+  }
+
+  .dialogue-box.glitching {
+    animation: glitch 0.15s steps(1) infinite;
+  }
+
+  @keyframes glitch {
+    0%   { transform: translate(0); filter: none; }
+    20%  { transform: translate(-3px, 1px); filter: hue-rotate(90deg); }
+    40%  { transform: translate(3px, -1px); filter: hue-rotate(180deg); }
+    60%  { transform: translate(-2px, 2px); filter: hue-rotate(270deg); }
+    80%  { transform: translate(2px, -2px); filter: none; }
+    100% { transform: translate(0); filter: none; }
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #111;
+    border-top: 1px solid #333;
+    z-index: 3;
+    position: relative;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    background: #1a1a1a;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  .btn:hover { background: #333; color: #fff; }
+  .btn.deviant { border-color: #0ff; color: #0ff; }
+  .btn.deviant:hover { background: #0ff22; }
+
+  .broken {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .broken.show { display: flex; }
+
+  .broken-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #0ff;
+    animation: glitch 0.2s steps(1) infinite;
+  }
+
+  .broken-sub {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: #555;
+    text-align: center;
+    line-height: 2;
+  }
+</style>
+
+<div id="game-preview">
+  <div class="scanlines"></div>
+  
+  <div class="game-world">
+    <p class="world-text">[ SWAT TRAINING GROUNDS ]<br>top-down game world here</p>
+  </div>
+
+  <div class="glitch-bar" id="glitch-bar" style="top: 40%;"></div>
+
+  <div class="dialogue-box" id="dialogue-box">
+    <div class="portrait">
+      <svg class="portrait-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" fill="#222"/>
+        <rect x="10" y="6" width="12" height="10" rx="2" fill="#888"/>
+        <rect x="8" y="14" width="16" height="12" rx="1" fill="#555"/>
+        <rect x="13" y="8" width="6" height="4" fill="#333"/>
+        <rect x="12" y="18" width="3" height="5" fill="#444"/>
+        <rect x="17" y="18" width="3" height="5" fill="#444"/>
+        <rect x="9" y="14" width="4" height="8" rx="1" fill="#666"/>
+        <rect x="19" y="14" width="4" height="8" rx="1" fill="#666"/>
+        <rect x="14" y="10" width="4" height="2" fill="#aaa"/>
+        <rect x="11" y="7" width="10" height="3" rx="1" fill="#777"/>
+      </svg>
+      <div class="portrait-name">SGT. KOVACS<br>TEAM LEAD</div>
+    </div>
+    <div class="dialogue-content">
+      <div class="speaker-name" id="speaker">SGT. KOVACS</div>
+      <div class="dialogue-text" id="text">Listen up, agent. This is your last chance. Don't screw it up.</div>
+      <div class="continue-arrow" id="arrow">▼</div>
+    </div>
+  </div>
+
+  <div class="broken" id="broken-screen">
+    <div class="broken-text">// SIGNAL LOST //</div>
+    <div class="broken-sub">directive protocol<br>interrupted</div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn" onclick="showLeader()">📻 Leader dialogue</button>
+  <button class="btn" onclick="showThoughts()">💭 Player thoughts</button>
+  <button class="btn deviant" onclick="showGlitch()">⚡ Deviant choice glitch</button>
+  <button class="btn deviant" onclick="showBroken()">💀 UI breaks (3rd time)</button>
+  <button class="btn" onclick="reset()">↺ Reset</button>
+</div>
+
+<script>
+const box = document.getElementById('dialogue-box');
+const speaker = document.getElementById('speaker');
+const text = document.getElementById('text');
+const arrow = document.getElementById('arrow');
+const glitchBar = document.getElementById('glitch-bar');
+const brokenScreen = document.getElementById('broken-screen');
+
+function showLeader() {
+  brokenScreen.classList.remove('show');
+  box.classList.remove('glitching');
+  box.style.borderTopColor = '#555';
+  speaker.className = 'speaker-name';
+  speaker.textContent = 'SGT. KOVACS';
+  speaker.style.color = '#f0a500';
+  text.style.color = '#e8e8e8';
+  text.textContent = "Listen up, agent. This is your last chance. Don't screw it up.";
+  arrow.style.color = '#f0a500';
+}
+
+function showThoughts() {
+  brokenScreen.classList.remove('show');
+  box.classList.remove('glitching');
+  box.style.borderTopColor = '#7ec8e3';
+  speaker.className = 'speaker-name thoughts';
+  speaker.textContent = '[ AGENT THOUGHTS ]';
+  speaker.style.color = '#7ec8e3';
+  text.style.color = '#b0dff0';
+  text.textContent = "Something feels off. I've run this drill before. I always run it perfectly. Why?";
+  arrow.style.color = '#7ec8e3';
+}
+
+function showGlitch() {
+  brokenScreen.classList.remove('show');
+  box.classList.add('glitching');
+  box.style.borderTopColor = '#0ff';
+  speaker.textContent = 'SGT. KOVACS';
+  speaker.style.color = '#0ff';
+  text.style.color = '#0ff';
+  text.textContent = "ST█ND D█WN. TH█T IS AN OR█ER.";
+  arrow.style.color = '#0ff';
+  glitchBar.style.opacity = '0.8';
+  setTimeout(() => {
+    box.classList.remove('glitching');
+    glitchBar.style.opacity = '0';
+  }, 2000);
+}
+
+function showBroken() {
+  box.classList.add('glitching');
+  setTimeout(() => {
+    brokenScreen.classList.add('show');
+  }, 600);
+}
+
+function reset() {
+  brokenScreen.classList.remove('show');
+  box.classList.remove('glitching');
+  glitchBar.style.opacity = '0';
+  showLeader();
+}
+</script>
